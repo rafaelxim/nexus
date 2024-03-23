@@ -16,11 +16,11 @@ const GlobalStyles = createGlobalStyle`
   ${({ theme }) => css`
     html {
       font-size: 62.5%;
-      font-family: Galindo, sans-serif;
+      font-family: "Roboto", sans-serif;
 
-      /* @media ${device.desktop} {
-        font-size: 110%;
-      } */
+      @media ${device.fourK} {
+        font-size: 125%;
+      }
     }
     body {
       background-color: ${theme.colors.background.default};
