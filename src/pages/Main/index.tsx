@@ -1,13 +1,81 @@
-import * as S from "./styles.ts";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import ColaboradorRank from "../../components/ColaboradorRank";
+import * as S from "./styles.ts";
 
-import Weather from "./../../assets/weatherIcon.png";
+import axios from "axios";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Alerta from "../../components/Alerta/index.tsx";
 import ColaboradorCard from "../../components/ColaboradorCard/index.tsx";
+import { ColaboradorInfo } from "../../types/index.ts";
+import Weather from "./../../assets/weatherIcon.png";
 
 const Main = () => {
+  const [colaborators, setColaborators] = useState<ColaboradorInfo[]>();
+
+  useEffect(() => {
+    async function getData() {
+      const { data } = await axios.get<{ services_by_user: ColaboradorInfo[] }>(
+        "https://dash.atendimento.wmcnetworks.com.br:3443/api/v1/services_by_user",
+        {
+          params: {
+            // date: "2024-12-31",
+          },
+        }
+      );
+
+      setColaborators(data.services_by_user);
+    }
+
+    getData();
+  }, []);
+
+  const chunkArray = (
+    array: ColaboradorInfo[],
+    chunkSize: number
+  ): ColaboradorInfo[][] => {
+    const chunks: ColaboradorInfo[][] = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
+  };
+
+  const chunks = useMemo(() => {
+    console.log({ colaborators });
+    if (colaborators && colaborators?.length > 0) {
+      return chunkArray(colaborators!, 4);
+    }
+    return [];
+  }, [colaborators]);
+
+  console.log({ chunks });
+
+  const renderCarousel = useCallback(() => {
+    if (chunks.length > 0) {
+      return (
+        <Carousel
+          showIndicators={false}
+          autoPlay
+          infiniteLoop
+          axis="horizontal"
+          interval={6000}
+          stopOnHover={false}
+        >
+          {chunks.map((chunk) => (
+            <S.Carrousel>
+              {chunk.map((colaborator) => (
+                <ColaboradorCard colaboradorInfo={colaborator} />
+              ))}
+            </S.Carrousel>
+          ))}
+        </Carousel>
+      );
+    } else {
+      return <div>Carregando...</div>;
+    }
+  }, [chunks]);
+
   return (
     <S.Wrapper>
       {/* Header */}
@@ -67,26 +135,7 @@ const Main = () => {
             </S.AlertasTable>
           </S.Alertas>
         </S.ContentLeft>
-        <S.ContentRight>
-          <Carousel autoPlay infiniteLoop axis="vertical" interval={6000}>
-            <div>
-              <S.Carrousel>
-                <ColaboradorCard />
-                <ColaboradorCard />
-                <ColaboradorCard />
-                <ColaboradorCard />
-              </S.Carrousel>
-            </div>
-            <div>
-              <S.Carrousel>
-                <ColaboradorCard />
-                <ColaboradorCard />
-                <ColaboradorCard />
-                <div></div>
-              </S.Carrousel>
-            </div>
-          </Carousel>
-        </S.ContentRight>
+        <S.ContentRight>{renderCarousel()}</S.ContentRight>
       </S.ContentWrapper>
     </S.Wrapper>
   );

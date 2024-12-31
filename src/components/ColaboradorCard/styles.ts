@@ -4,7 +4,6 @@ export const Wrapper = styled.div`
   background-color: #fff;
   border-radius: 10px;
   padding: 4rem 1.8rem;
-  min-height: 5rem;
   font-size: 1rem;
 `;
 export const Info = styled.div`

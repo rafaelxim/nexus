@@ -51,19 +51,10 @@ export const ContentWrapper = styled.div`
 `;
 
 export const ContentLeft = styled.div`
-  flex: 1 0 calc(53% - 2rem);
+  width: calc(53% - 2rem);
 `;
 export const ContentRight = styled.div`
-  flex: 1 0 calc(47% - 2rem);
-
-  .carousel {
-    padding-bottom: 5rem;
-  }
-
-  .carousel-status {
-    bottom: 0;
-    top: unset;
-  }
+  width: calc(47% - 2rem);
 `;
 
 export const TopColaborators = styled.div`
@@ -122,8 +113,7 @@ export const AlertasTable = styled.table`
 `;
 
 export const Carrousel = styled.div`
-  min-height: 50rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 3rem 1rem;
+  grid-gap: 1rem 2rem;
 `;
